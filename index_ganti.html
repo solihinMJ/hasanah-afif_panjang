@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muzik Majlis</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;width:100%;background:transparent;font-family:Arial,sans-serif}
+.player{
+  width:100%;max-width:none;margin:8px auto;padding:12px 18px;
+  border:1px solid #c6dfef;border-radius:50px;background:#f8fcff;
+  box-shadow:0 5px 18px rgba(40,90,130,.10);color:#174d78;
+}
+.music-row{width:100%;display:flex;align-items:center;gap:14px}
+.play-button{
+  border:0;border-radius:50%;width:44px;height:44px;min-width:44px;
+  background:#5aa2d6;color:white;font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.music-info{width:125px;min-width:125px}
+.title{font-size:14px;font-weight:bold;letter-spacing:.3px}
+.status{font-size:10px;color:#66839a;margin-top:3px;white-space:nowrap}
+.progress{flex:1;height:7px;background:#dceef9;border-radius:10px;overflow:hidden;cursor:pointer}
+.bar{height:100%;width:0%;background:#5aa2d6;border-radius:10px}
+@media(max-width:500px){
+  .music-info{width:100px;min-width:100px}
+  .title{font-size:12px}.status{font-size:9px}.music-row{gap:10px}
+}
+</style>
+</head>
+<body>
+<div class="player">
+  <div class="music-row">
+    <button class="play-button" id="play" type="button">▶</button>
+    <div class="music-info">
+      <div class="title">🎵 Muzik Majlis</div>
+      <div class="status" id="status">Tekan ▶ untuk memainkan</div>
+    </div>
+    <div class="progress" id="progress"><div class="bar" id="bar"></div></div>
+  </div>
+</div>
+
+<audio id="audio" preload="metadata">
+<source src="https://raw.githubusercontent.com/solihinMJ/Kad-kawin/main/paulyudin-romantic-wedding-piano-160698.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const audio=document.getElementById("audio"),play=document.getElementById("play"),
+bar=document.getElementById("bar"),status=document.getElementById("status"),
+progress=document.getElementById("progress");
+
+play.addEventListener("click",async()=>{
+ if(audio.paused){
+  try{await audio.play();play.textContent="Ⅱ";status.textContent="Muzik sedang dimainkan";}
+  catch(e){status.textContent="Tekan ▶ sekali lagi";}
+ }else{audio.pause();play.textContent="▶";status.textContent="Muzik dijeda";}
+});
+audio.addEventListener("timeupdate",()=>{
+ if(audio.duration)bar.style.width=(audio.currentTime/audio.duration*100)+"%";
+});
+progress.addEventListener("click",e=>{
+ if(!audio.duration)return;
+ const r=progress.getBoundingClientRect();
+ audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration;
+});
+audio.addEventListener("ended",()=>{
+ play.textContent="▶";bar.style.width="0%";status.textContent="Muzik tamat";
+});
+audio.addEventListener("error",()=>status.textContent="Fail muzik tidak dapat dimuatkan.");
+</script>
+</body>
+</html>
